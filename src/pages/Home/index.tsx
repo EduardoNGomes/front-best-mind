@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Product, columns } from './column'
 import { DataTable } from './datatable'
-
+import { Power } from '@phosphor-icons/react'
+import { useNavigate } from 'react-router-dom'
 const MockData: Product[] = [
   {
     id: 'ccc94124-0c8c-41bd-84bd-535e1632438b',
@@ -22,15 +23,23 @@ const MockData: Product[] = [
 ]
 
 export const Home = () => {
+  const navigate = useNavigate()
+
+  const handleSingOut = () => {
+    navigate('/sign-in')
+  }
   return (
     <>
-      <header className="flex justify-between p-4">
+      <header className="flex justify-between p-4 lg:max-w-7xl mx-auto items-center">
         <div className="flex items-center gap-2 text-black text-base font-bold uppercase">
           <img src="/logo.png" alt="" />
           <h1>nunes sports</h1>
         </div>
         <div>
-          <img src="/logo.png" alt="" />
+          <Power
+            className="h-8 w-8 cursor-pointer text-gray-950 hover:opacity-70"
+            onClick={handleSingOut}
+          />
         </div>
       </header>
 

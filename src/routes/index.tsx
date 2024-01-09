@@ -8,7 +8,7 @@ export const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: '/singn-in',
+    path: '/sign-in',
     element: <SignIn />,
   },
 ])

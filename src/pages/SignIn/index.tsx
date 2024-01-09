@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { InputWithLabel } from '@/components/ui/inputWithLabel'
+import { InputWithLabel } from '@/components/ui/input-with-label'
 import { useNavigate } from 'react-router-dom'
 
 export const SignIn = () => {
