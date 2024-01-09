@@ -1,7 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { InputWithLabel } from '@/components/ui/inputWithLabel'
+import { useNavigate } from 'react-router-dom'
 
 export const SignIn = () => {
+  const navigate = useNavigate()
+  const handleSingIn = async () => {
+    navigate('/')
+  }
+
   return (
     <main className="w-full min-h-screen grid grid-cols-2 place-items-center gap-10">
       <section>
@@ -24,7 +30,7 @@ export const SignIn = () => {
         <form className="flex flex-col gap-4 w-full">
           <InputWithLabel label="Email" type="email" className="w-full" />
           <InputWithLabel label="Senha" type="password" />
-          <Button className="w-full " type="button">
+          <Button className="w-full " type="button" onClick={handleSingIn}>
             Entrar
           </Button>
         </form>
