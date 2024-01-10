@@ -27,7 +27,7 @@ export function InputWithLabel({
         type={type}
         id={id}
         placeholder={placeholder}
-        className="xl:max-w-full"
+        className="xl:max-w-full bg-neutral-100 rounded-lg border border-slate-200"
         {...props}
       />
     </div>

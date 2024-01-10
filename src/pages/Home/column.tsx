@@ -23,6 +23,7 @@ import {
   AlertDialogAction,
   AlertDialogPortal,
 } from '@/components/ui/alert-dialog'
+import { SheetProduct } from '@/components/ui/sheet-product'
 
 export type Product = {
   id: string
@@ -53,8 +54,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const payment = row.original
-      // onClick={() => navigator.clipboard.writeText(payment.id)}
+      const product = row.original
 
       return (
         <DropdownMenu>
@@ -65,10 +65,21 @@ export const columns: ColumnDef<Product>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="flex items-center gap-4 cursor-pointer">
-              <PencilSimple className="h-4 w-4" />
-              editar
-            </DropdownMenuItem>
+            <SheetProduct
+              id={product.id}
+              label="Adicione, altere ou exclua um produto"
+              title="Adicionar Produto"
+            >
+              <DropdownMenuItem
+                className="flex items-center gap-4 cursor-pointer"
+                onSelect={(evt) => {
+                  evt.preventDefault()
+                }}
+              >
+                <PencilSimple className="h-4 w-4" />
+                editar
+              </DropdownMenuItem>
+            </SheetProduct>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>

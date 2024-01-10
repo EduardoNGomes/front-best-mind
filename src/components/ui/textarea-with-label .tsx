@@ -23,7 +23,7 @@ export function TextareaWithLabel({
       <Textarea
         id={id}
         placeholder={placeholder}
-        className="resize-none h-40"
+        className="resize-none h-40 bg-neutral-100 rounded-lg border border-slate-200"
         {...props}
       />
     </div>
