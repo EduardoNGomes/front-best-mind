@@ -1,35 +1,36 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentProps, forwardRef } from 'react'
 import { Input } from './input'
 import { Label } from './label'
 
-type InputWithLabelProps = ComponentPropsWithoutRef<'input'> & {
+type InputWithLabelProps = ComponentProps<'input'> & {
   label: string
   subtitle?: string
 }
 
-export function InputWithLabel({
-  type = 'text',
-  label,
-  id,
-  placeholder,
-  subtitle,
-  ...props
-}: InputWithLabelProps) {
-  return (
-    <div className="w-full gap-1.5 flex flex-col">
-      <div className="flex flex-col">
-        <Label htmlFor={id}>{label}</Label>
-        {subtitle && (
-          <p className="text-zinc-600 text-sm font-normal">{subtitle}</p>
-        )}
+export const InputWithLabel = forwardRef<HTMLInputElement, InputWithLabelProps>(
+  ({ type = 'text', label, id, placeholder, subtitle, ...props }, ref) => {
+    return (
+      <div className="w-full gap-1.5 flex flex-col">
+        <div className="flex flex-col">
+          <Label htmlFor={id} className="capitalize">
+            {label}
+          </Label>
+          {subtitle && (
+            <p className="text-zinc-600 text-sm font-normal">{subtitle}</p>
+          )}
+        </div>
+        <Input
+          type={type}
+          id={id}
+          placeholder={placeholder}
+          // @ts-expect-error 'wrong ref type'
+          ref={ref}
+          className="xl:max-w-full bg-neutral-100 rounded-lg border border-slate-200"
+          {...props}
+        />
       </div>
-      <Input
-        type={type}
-        id={id}
-        placeholder={placeholder}
-        className="xl:max-w-full bg-neutral-100 rounded-lg border border-slate-200"
-        {...props}
-      />
-    </div>
-  )
-}
+    )
+  },
+)
+
+InputWithLabel.displayName = 'InputWithLabel'
