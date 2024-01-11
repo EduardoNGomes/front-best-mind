@@ -1,10 +1,43 @@
 import { Button } from '@/components/ui/button'
 import { InputWithLabel } from '@/components/ui/input-with-label'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const schema = z.object({
+  email: z
+    .string()
+    .email()
+    .min(8, 'Campo Obrigatorio')
+    .refine(
+      (value) => !/[<>"' \t]/g.test(value),
+      'O campo login não pode conter os caracteres <>"\' ou espaços em branco.',
+    ),
+  password: z
+    .string()
+    .min(6, 'Campo Obrigatorio')
+    .refine(
+      (value) => !/[<>"' \t]/g.test(value),
+      'O campo password não pode conter os caracteres <>"\' ou espaços em branco.',
+    ),
+})
+
+type FormLoginType = z.infer<typeof schema>
 
 export const SignIn = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormLoginType>({
+    resolver: zodResolver(schema),
+  })
+
   const navigate = useNavigate()
-  const handleSingIn = async () => {
+
+  const onSubmit = async (data: FormLoginType) => {
+    console.log(data)
     navigate('/')
   }
 
@@ -27,10 +60,30 @@ export const SignIn = () => {
             Digite suas informações para entrar na aplicação{' '}
           </p>
         </div>
-        <form className="flex flex-col gap-4 w-full">
-          <InputWithLabel label="Email" type="email" className="w-full" />
-          <InputWithLabel label="Senha" type="password" />
-          <Button className="w-full " type="button" onClick={handleSingIn}>
+        <form
+          onSubmit={handleSubmit((data) => onSubmit(data))}
+          className="flex flex-col gap-1 w-full"
+        >
+          <InputWithLabel
+            label="email"
+            type="email"
+            className="w-full"
+            id="email-login"
+            {...register('email')}
+          />
+          <p className="text-xs text-destructive h-4">
+            {errors.email?.message}
+          </p>
+          <InputWithLabel
+            {...register('password')}
+            label="senha"
+            type="password"
+            id="password-login"
+          />
+          <p className="text-xs text-destructive h-4">
+            {errors.password?.message}
+          </p>
+          <Button className="w-full" type="submit">
             Entrar
           </Button>
         </form>
