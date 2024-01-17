@@ -3,6 +3,7 @@ import { Product, columns } from './column'
 import { DataTable } from './datatable'
 import { Power } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
+import { SheetProduct } from '@/components/ui/sheet-product'
 const MockData: Product[] = [
   {
     id: 'ccc94124-0c8c-41bd-84bd-535e1632438b',
@@ -46,7 +47,12 @@ export const Home = () => {
       <main className="p-4 lg:max-w-7xl mx-auto flex flex-col gap-4">
         <section className="flex items-center justify-between">
           <h2 className="text-black text-2xl font-bold">Produtos</h2>
-          <Button className="capitalize">adicionar produto</Button>
+          <SheetProduct
+            label="Adicione um novo produto"
+            title="Adicionar Produto"
+          >
+            <Button className="capitalize">adicionar produto</Button>
+          </SheetProduct>
         </section>
         <DataTable data={MockData} columns={columns} />
       </main>

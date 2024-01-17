@@ -9,14 +9,14 @@ const schema = z.object({
   email: z
     .string()
     .email()
-    .min(8, 'Campo Obrigatorio')
+    .min(8, 'Insira um email válido')
     .refine(
       (value) => !/[<>"' \t]/g.test(value),
       'O campo login não pode conter os caracteres <>"\' ou espaços em branco.',
     ),
   password: z
     .string()
-    .min(6, 'Campo Obrigatorio')
+    .min(6, 'Insira uma senha com mais de seis caracteres')
     .refine(
       (value) => !/[<>"' \t]/g.test(value),
       'O campo password não pode conter os caracteres <>"\' ou espaços em branco.',

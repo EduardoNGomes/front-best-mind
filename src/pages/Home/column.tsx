@@ -66,9 +66,9 @@ export const columns: ColumnDef<Product>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <SheetProduct
-              id={product.id}
-              label="Adicione, altere ou exclua um produto"
-              title="Adicionar Produto"
+              idToEdit={product.id}
+              label="Altere um produto"
+              title="Alterar Produto"
             >
               <DropdownMenuItem
                 className="flex items-center gap-4 cursor-pointer"
