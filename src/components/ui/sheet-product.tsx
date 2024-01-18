@@ -76,7 +76,6 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
     handleSubmit,
     formState: { errors },
     control,
-    getValues,
   } = useForm<FormProductType>({
     resolver: zodResolver(schema),
     defaultValues: { name: '', price: '', description: '', image: '' },
@@ -181,10 +180,6 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
               />
             )}
           </div>
-          <Button
-            type="button"
-            onClick={() => console.log(getValues('image'))}
-          />
 
           <SheetFooter>
             <SheetClose asChild>

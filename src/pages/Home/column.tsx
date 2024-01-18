@@ -26,6 +26,7 @@ import {
 import { SheetProduct } from '@/components/ui/sheet-product'
 
 export type Product = {
+  image: string
   id: string
   description: string
   name: string
@@ -35,6 +36,14 @@ export type Product = {
 }
 
 export const columns: ColumnDef<Product>[] = [
+  {
+    id: 'image',
+    cell: ({ row }) => {
+      const product = row.original
+
+      return <img src={product.image} className="" alt="" />
+    },
+  },
   {
     accessorKey: 'name',
     header: 'nome',

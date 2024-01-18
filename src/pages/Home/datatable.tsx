@@ -34,10 +34,18 @@ export function DataTable<TData, TValue>({
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow
+              key={headerGroup.id}
+              className="[&>*:nth-child(3)]:hidden [&>*:nth-child(4)]:hidden [&>*:nth-child(5)]:hidden
+              md:[&>*:nth-child(3)]:table-cell md:[&>*:nth-child(4)]:table-cell md:[&>*:nth-child(5)]:table-cell
+              "
+            >
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="first-of-type:w-16 first-of-type:aspect-square"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -56,6 +64,10 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                className="[&>*:nth-child(3)]:hidden [&>*:nth-child(4)]:hidden [&>*:nth-child(5)]:hidden
+                md:[&>*:nth-child(3)]:table-cell md:[&>*:nth-child(4)]:table-cell md:[&>*:nth-child(5)]:table-cell
+      
+                "
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

@@ -6,16 +6,18 @@ import { useNavigate } from 'react-router-dom'
 import { SheetProduct } from '@/components/ui/sheet-product'
 const MockData: Product[] = [
   {
+    image: '/camisa-1.png',
     id: 'ccc94124-0c8c-41bd-84bd-535e1632438b',
-    name: 'product 10',
+    name: 'Camisa São Paulo  23/24 Black Treino',
     description: 'Product 1 description',
     price: '10',
     createdAt: '2024-01-08T22:10:54.488Z',
     updatedAt: '2024-01-08T22:10:54.488Z',
   },
   {
+    image: '/camisa-2.png',
     id: 'db5a250d-72ed-40f1-8510-b90ed0722b6e',
-    name: 'product 1',
+    name: 'Camisa São Paulo  23/24 Black Treino',
     description: 'Product 1 description',
     price: '10',
     createdAt: '2024-01-09T14:17:19.355Z',
@@ -45,13 +47,13 @@ export const Home = () => {
       </header>
 
       <main className="p-4 lg:max-w-7xl mx-auto flex flex-col gap-4">
-        <section className="flex items-center justify-between">
+        <section className="flex sm:items-center justify-between flex-col sm:flex-row">
           <h2 className="text-black text-2xl font-bold">Produtos</h2>
           <SheetProduct
             label="Adicione um novo produto"
             title="Adicionar Produto"
           >
-            <Button className="capitalize">adicionar produto</Button>
+            <Button className="capitalize w-fit">adicionar produto</Button>
           </SheetProduct>
         </section>
         <DataTable data={MockData} columns={columns} />
