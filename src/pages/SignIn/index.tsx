@@ -90,7 +90,7 @@ export const SignIn = () => {
         <p className="flex self-end text-black text-base font-normal ">
           Ainda não tem conta?{' '}
           <Link
-            to="/sign-out"
+            to="/sign-up"
             className="ml-2 text-primary text-base font-bold transition-all duration-300 hover:opacity-75"
           >
             Cadastre-se!

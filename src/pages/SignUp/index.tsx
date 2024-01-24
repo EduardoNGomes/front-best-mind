@@ -26,7 +26,7 @@ const schema = z.object({
 
 type FormLoginType = z.infer<typeof schema>
 
-export const SignOut = () => {
+export const SignUp = () => {
   const {
     register,
     handleSubmit,
