@@ -1,0 +1,109 @@
+import { Button } from '@/components/ui/button'
+import { InputWithLabel } from '@/components/ui/input-with-label'
+import { Link, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const schema = z.object({
+  name: z.string().min(1, 'Campo obrigatorio'),
+  email: z
+    .string()
+    .email()
+    .min(8, 'Insira um email válido')
+    .refine(
+      (value) => !/[<>"' \t]/g.test(value),
+      'O campo login não pode conter os caracteres <>"\' ou espaços em branco.',
+    ),
+  password: z
+    .string()
+    .min(6, 'Insira uma senha com mais de seis caracteres')
+    .refine(
+      (value) => !/[<>"' \t]/g.test(value),
+      'O campo password não pode conter os caracteres <>"\' ou espaços em branco.',
+    ),
+})
+
+type FormLoginType = z.infer<typeof schema>
+
+export const SignOut = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormLoginType>({
+    resolver: zodResolver(schema),
+  })
+
+  const navigate = useNavigate()
+
+  const onSubmit = async (data: FormLoginType) => {
+    console.log(data)
+    navigate('/')
+  }
+
+  return (
+    <main className="w-full min-h-screen grid grid-cols-2 place-items-center gap-10">
+      <section className="flex flex-col items-center gap-10">
+        <div className="flex flex-col items-center">
+          <h2 className="text-primary text-5xl font-normal font-display text-center">
+            Bem Vindo!
+          </h2>
+          <p className="w-10/12 text-center">
+            Sua fonte exclusiva de camisetas de alta qualidade para verdadeiros
+            de futebol.
+          </p>
+        </div>
+        <img src="/signOutArt.png" alt="" />
+      </section>
+      <section className="flex flex-col items-center justify-center gap-4 xl:w-[520px]">
+        <div className="w-full">
+          <h1 className="text-black text-xl font-bold capitalize">Cadastro</h1>
+          <p className="text-zinc-700 text-sm font-normal">
+            Digite suas informações para se cadastrar!
+          </p>
+        </div>
+        <form
+          onSubmit={handleSubmit((data) => onSubmit(data))}
+          className="flex flex-col gap-1 w-full"
+        >
+          <InputWithLabel
+            label="Nome"
+            type="text"
+            className="w-full"
+            id="name-create"
+            {...register('name')}
+            errorMessage={errors.name?.message}
+          />
+
+          <InputWithLabel
+            label="email"
+            type="email"
+            className="w-full"
+            id="email-create"
+            {...register('email')}
+            errorMessage={errors.email?.message}
+          />
+
+          <InputWithLabel
+            {...register('password')}
+            label="senha"
+            type="password"
+            id="password-create"
+            errorMessage={errors.password?.message}
+          />
+
+          <Button className="w-full" type="submit">
+            cadastrar
+          </Button>
+        </form>
+        <Link
+          to="/sign-in"
+          className="ml-2  text-base text-foreground  flex self-end transition-all duration-300 hover:opacity-75"
+        >
+          Voltar
+        </Link>
+      </section>
+    </main>
+  )
+}
