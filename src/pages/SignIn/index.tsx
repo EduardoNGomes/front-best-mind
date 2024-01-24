@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { InputWithLabel } from '@/components/ui/input-with-label'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -87,6 +87,15 @@ export const SignIn = () => {
             Entrar
           </Button>
         </form>
+        <p className="flex self-end text-black text-base font-normal ">
+          Ainda não tem conta?{' '}
+          <Link
+            to="/sign-out"
+            className="ml-2 text-primary text-base font-bold transition-all duration-300 hover:opacity-75"
+          >
+            Cadastre-se!
+          </Link>
+        </p>
       </section>
     </main>
   )
