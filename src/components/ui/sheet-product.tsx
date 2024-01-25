@@ -115,7 +115,7 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
     <Sheet onOpenChange={(e) => handleSave(e)} open={open}>
       <SheetTrigger asChild>{children}</SheetTrigger>
 
-      <SheetContent className="lg:max-w-[640px]">
+      <SheetContent className="overflow-scroll w-full lg:max-w-[640px] md:overflow-hidden">
         <form
           className="flex flex-col gap-4 h-full"
           onSubmit={handleSubmit((data) => onSubmit(data))}
@@ -171,7 +171,7 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
             )}
           />
 
-          <div className="flex-1 h-80 w-60">
+          <div className="flex-1 h-50 w-32 md:h-80 md:w-60">
             {imageSelected && (
               <img
                 src={imageSelected}
@@ -181,7 +181,7 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
             )}
           </div>
 
-          <SheetFooter>
+          <SheetFooter className="flex flex-row gap-2 justify-end pb-5 md:pb-0">
             <SheetClose asChild>
               <Button type="button" variant={'outline'}>
                 cancelar
