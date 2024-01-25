@@ -3,7 +3,11 @@ import { InputWithLabel } from '@/components/ui/input-with-label'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
+
 import { z } from 'zod'
+import { api } from '@/services/axios'
+import { AxiosError } from 'axios'
 
 const schema = z.object({
   name: z.string().min(1, 'Campo obrigatorio'),
@@ -38,8 +42,19 @@ export const SignUp = () => {
   const navigate = useNavigate()
 
   const onSubmit = async (data: FormLoginType) => {
-    console.log(data)
-    navigate('/')
+    try {
+      const response = await api.post('/user', data)
+      console.log(response)
+      toast.success('Usuário criado com sucesso')
+      navigate(`/sign-in`)
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 409) {
+        toast.error(`Email já está sendo utilizado`)
+      } else {
+        toast.error(`Não foi possível concluir está ação`)
+        console.log(error)
+      }
+    }
   }
 
   return (
