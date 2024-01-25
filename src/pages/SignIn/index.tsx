@@ -42,18 +42,21 @@ export const SignIn = () => {
   }
 
   return (
-    <main className="w-full min-h-screen grid grid-cols-2 place-items-center gap-10">
-      <section>
-        <h2 className="text-primary text-5xl font-normal font-display">
-          Bem Vindo de Volta!
-        </h2>
-        <p>
-          Sua fonte exclusiva de camisetas de alta qualidade para verdadeiros de
-          futebol.
-        </p>
-        <img src="/signInArt.png" alt="" />
+    <main className="w-full min-h-screen flex flex-col justify-center gap-10 md:grid md:grid-cols-2 place-items-center">
+      <section className="flex flex-col items-center gap-10">
+        <div className="flex flex-col items-center">
+          <h2 className="text-primary text-5xl font-normal font-display text-center">
+            Bem Vindo de Volta!
+          </h2>
+          <p className="w-full md:w-10/12 text-center">
+            Sua fonte exclusiva de camisetas de alta qualidade para verdadeiros
+            de futebol.
+          </p>
+        </div>
+
+        <img src="/signInArt.png" alt="" className="hidden md:block" />
       </section>
-      <section className="flex flex-col items-center justify-center gap-4 xl:w-[520px]">
+      <section className="flex flex-col items-center px-6 md:px-0 justify-center gap-4 xl:w-[520px]">
         <div className="w-full">
           <h1 className="text-black text-xl font-bold capitalize">login</h1>
           <p className="text-zinc-700 text-sm font-normal">
@@ -67,22 +70,17 @@ export const SignIn = () => {
           <InputWithLabel
             label="email"
             type="email"
-            className="w-full"
             id="email-login"
             {...register('email')}
+            errorMessage={errors.email?.message}
           />
-          <p className="text-xs text-destructive h-4">
-            {errors.email?.message}
-          </p>
           <InputWithLabel
             {...register('password')}
             label="senha"
             type="password"
             id="password-login"
+            errorMessage={errors.password?.message}
           />
-          <p className="text-xs text-destructive h-4">
-            {errors.password?.message}
-          </p>
           <Button className="w-full" type="submit">
             Entrar
           </Button>

@@ -43,18 +43,19 @@ export const SignUp = () => {
   }
 
   return (
-    <main className="w-full min-h-screen grid grid-cols-2 place-items-center gap-10">
+    <main className="w-full min-h-screen flex flex-col justify-center gap-10 md:grid md:grid-cols-2 place-items-center">
       <section className="flex flex-col items-center gap-10">
         <div className="flex flex-col items-center">
           <h2 className="text-primary text-5xl font-normal font-display text-center">
             Bem Vindo!
           </h2>
-          <p className="w-10/12 text-center">
+          <p className="w-full md:w-10/12 text-center">
             Sua fonte exclusiva de camisetas de alta qualidade para verdadeiros
             de futebol.
           </p>
         </div>
-        <img src="/signOutArt.png" alt="" />
+
+        <img src="/signOutArt.png" alt="" className="hidden md:block" />
       </section>
       <section className="flex flex-col items-center justify-center gap-4 xl:w-[520px]">
         <div className="w-full">
@@ -70,7 +71,6 @@ export const SignUp = () => {
           <InputWithLabel
             label="Nome"
             type="text"
-            className="w-full"
             id="name-create"
             {...register('name')}
             errorMessage={errors.name?.message}
@@ -79,7 +79,6 @@ export const SignUp = () => {
           <InputWithLabel
             label="email"
             type="email"
-            className="w-full"
             id="email-create"
             {...register('email')}
             errorMessage={errors.email?.message}
