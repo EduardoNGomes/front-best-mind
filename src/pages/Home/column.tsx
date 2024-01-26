@@ -24,6 +24,7 @@ import {
   AlertDialogPortal,
 } from '@/components/ui/alert-dialog'
 import { SheetProduct } from '@/components/ui/sheet-product'
+import { api } from '@/lib/axios'
 
 export type Product = {
   image: string
@@ -41,7 +42,13 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const product = row.original
 
-      return <img src={product.image} className="" alt="" />
+      return (
+        <img
+          src={`${api.defaults.baseURL}/${product.image}`}
+          className=""
+          alt=""
+        />
+      )
     },
   },
   {
