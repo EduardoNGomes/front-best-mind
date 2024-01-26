@@ -42,8 +42,9 @@ export const SignIn = () => {
   const onSubmit = async (data: FormLoginType) => {
     console.log(data)
     try {
-      const response = await api.post('/auth', data)
+      await api.post('/auth', data)
       toast.success('Bem Vindo!')
+
       navigate(`/`)
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 400) {

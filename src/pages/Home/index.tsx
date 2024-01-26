@@ -1,32 +1,37 @@
 import { Button } from '@/components/ui/button'
-import { Product, columns } from './column'
+import { columns } from './column'
 import { DataTable } from './datatable'
 import { Power } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 import { SheetProduct } from '@/components/ui/sheet-product'
-const MockData: Product[] = [
-  {
-    image: '/camisa-1.png',
-    id: 'ccc94124-0c8c-41bd-84bd-535e1632438b',
-    name: 'Camisa São Paulo  23/24 Black Treino',
-    description: 'Product 1 description',
-    price: '10',
-    createdAt: '2024-01-08T22:10:54.488Z',
-    updatedAt: '2024-01-08T22:10:54.488Z',
-  },
-  {
-    image: '/camisa-2.png',
-    id: 'db5a250d-72ed-40f1-8510-b90ed0722b6e',
-    name: 'Camisa São Paulo  23/24 Black Treino',
-    description: 'Product 1 description',
-    price: '10',
-    createdAt: '2024-01-09T14:17:19.355Z',
-    updatedAt: '2024-01-09T14:17:19.355Z',
-  },
-]
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/services/axios'
+import { AxiosError } from 'axios'
+import { toast } from 'sonner'
 
 export const Home = () => {
   const navigate = useNavigate()
+
+  const {
+    isPending,
+    error,
+    data: response,
+  } = useQuery({
+    queryKey: ['repoData'],
+    queryFn: async () => await api.get('/product'),
+  })
+
+  if (isPending) return 'Loading...'
+  // TODO: SKELETON
+
+  if (error) {
+    if (error instanceof AxiosError && error.status === 401) {
+      toast.warning('Sessão expirada.')
+    } else {
+      toast.error('Ocorreu um error inexperado')
+    }
+    navigate('/sign-in')
+  }
 
   const handleSingOut = () => {
     navigate('/sign-in')
@@ -56,7 +61,7 @@ export const Home = () => {
             <Button className="capitalize w-fit">adicionar produto</Button>
           </SheetProduct>
         </section>
-        <DataTable data={MockData} columns={columns} />
+        <DataTable data={response?.data.products} columns={columns} />
       </main>
     </>
   )
