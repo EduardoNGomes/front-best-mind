@@ -40,7 +40,6 @@ export const SignIn = () => {
   const navigate = useNavigate()
 
   const onSubmit = async (data: FormLoginType) => {
-    console.log(data)
     try {
       await api.post('/auth', data)
       toast.success('Bem Vindo!')

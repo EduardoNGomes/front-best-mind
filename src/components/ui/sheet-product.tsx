@@ -118,7 +118,10 @@ export function SheetProduct({
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 400) {
         toast.warning(`Por favor verifique novamente os campos.`)
-        console.log(error)
+        return
+      }
+      if (error instanceof AxiosError && error.response?.status === 409) {
+        toast.warning(`Este produto já existe.`)
         return
       }
 
@@ -136,27 +139,6 @@ export function SheetProduct({
   const { mutateAsync: handleCreateANewProductFn } = useMutation({
     mutationFn: handleCreateANewProduct,
 
-    // {
-    //   id: crypto.randomUUID(),
-    //   image: imageSelected,
-    //   name: variables.get('name'),
-    //   description: variables.get('description'),
-    //   price: variables.get('price'),
-    //   createAt: new Intl.DateTimeFormat('pt-BR', {
-    //     weekday: 'long',
-    //     year: 'numeric',
-    //     month: 'long',
-    //     day: 'numeric',
-    //     timeZone: 'UTC',
-    //   }).format(new Date()),
-    //   updatedAt: new Intl.DateTimeFormat('pt-BR', {
-    //     weekday: 'long',
-    //     year: 'numeric',
-    //     month: 'long',
-    //     day: 'numeric',
-    //     timeZone: 'UTC',
-    //   }).format(new Date()),
-    // },
     onSuccess: (_, variables) => {
       queryClient.setQueryData(['products'], (old: Product[]) => [
         ...old,
@@ -205,7 +187,7 @@ export function SheetProduct({
       try {
         await handleCreateANewProductFn(form)
       } catch (error) {
-        console.log(error)
+        toast.warning(`Ocorreu um erro inexperado, recarregue a página`)
       }
     }
   }
