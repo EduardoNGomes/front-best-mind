@@ -4,6 +4,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
+import { api } from '@/services/axios'
 
 const schema = z.object({
   email: z
@@ -38,7 +41,22 @@ export const SignIn = () => {
 
   const onSubmit = async (data: FormLoginType) => {
     console.log(data)
-    navigate('/')
+    try {
+      const response = await api.post('/auth', data)
+      toast.success('Bem Vindo!')
+      navigate(`/`)
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 400) {
+        toast.warning(`Por favor verifique novamente os campos.`)
+        return
+      }
+      if (error instanceof AxiosError && error.response?.status === 409) {
+        toast.warning(`E-mail/Senha inválido`)
+      } else {
+        toast.error(`Não foi possível concluir está ação`)
+        console.log(error)
+      }
+    }
   }
 
   return (

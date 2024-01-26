@@ -43,13 +43,16 @@ export const SignUp = () => {
 
   const onSubmit = async (data: FormLoginType) => {
     try {
-      const response = await api.post('/user', data)
-      console.log(response)
+      await api.post('/user', data)
       toast.success('Usuário criado com sucesso')
       navigate(`/sign-in`)
     } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 400) {
+        toast.warning(`Por favor verifique novamente os campos.`)
+        return
+      }
       if (error instanceof AxiosError && error.response?.status === 409) {
-        toast.error(`Email já está sendo utilizado`)
+        toast.warning(`Email já está sendo utilizado`)
       } else {
         toast.error(`Não foi possível concluir está ação`)
         console.log(error)
