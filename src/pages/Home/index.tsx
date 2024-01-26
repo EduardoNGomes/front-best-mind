@@ -5,7 +5,7 @@ import { Power } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 import { SheetProduct } from '@/components/ui/sheet-product'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/services/axios'
+import { api } from '@/lib/axios'
 import { AxiosError } from 'axios'
 import { toast } from 'sonner'
 
@@ -15,10 +15,13 @@ export const Home = () => {
   const {
     isPending,
     error,
-    data: response,
+    data: products,
   } = useQuery({
-    queryKey: ['repoData'],
-    queryFn: async () => await api.get('/product'),
+    queryKey: ['products'],
+    queryFn: async () => {
+      const { data } = await api.get('/product')
+      return data.products
+    },
   })
 
   if (isPending) return 'Loading...'
@@ -61,7 +64,7 @@ export const Home = () => {
             <Button className="capitalize w-fit">adicionar produto</Button>
           </SheetProduct>
         </section>
-        <DataTable data={response?.data.products} columns={columns} />
+        <DataTable data={products} columns={columns} />
       </main>
     </>
   )

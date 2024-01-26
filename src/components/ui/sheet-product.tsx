@@ -18,6 +18,12 @@ import { InputWithLabel } from './input-with-label'
 import { TextareaWithLabel } from './textarea-with-label '
 import { InputPriceWithLabel } from './input-price-with-label'
 import { InputFileWithLabel } from './input-file-with-label'
+import { api } from '@/lib/axios'
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Product } from '@/pages/Home/column'
 
 const verifyIfNumberIsValid = (value: string): boolean => {
   if (isNaN(Number(value))) return false
@@ -41,7 +47,8 @@ const schema = z.object({
       const sanitizedValue = value.replace(',', '.')
 
       return verifyIfNumberIsValid(sanitizedValue)
-    }, 'O campo digitado precisa ser um número válido'),
+    }, 'O campo digitado precisa ser um número válido')
+    .transform((value) => value.replace(',', '.')),
   image: z
     .any()
     .refine(
@@ -67,7 +74,14 @@ type SheetProductProps = {
   label: string
 }
 
-export function SheetProduct({ children, title, label }: SheetProductProps) {
+export function SheetProduct({
+  children,
+  title,
+  label,
+  idToEdit,
+}: SheetProductProps) {
+  const navigate = useNavigate()
+
   const [open, setOpen] = useState(false)
   const [imageSelected, setImageSelected] = useState<string | null>(null)
 
@@ -96,6 +110,84 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
     setImageSelected(previewURL)
   }
 
+  const handleCreateANewProduct = async (dataToCreated: FormData) => {
+    try {
+      await api.post('/product', dataToCreated)
+      toast.success('Produto criado com sucesso')
+      setOpen(false)
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 400) {
+        toast.warning(`Por favor verifique novamente os campos.`)
+        console.log(error)
+        return
+      }
+
+      if (error instanceof AxiosError && error.status === 401) {
+        toast.warning('Sessão expirada.')
+      } else {
+        toast.error('Ocorreu um error inexperado')
+      }
+      navigate('/sign-in')
+    }
+  }
+
+  const queryClient = useQueryClient()
+
+  const { mutateAsync: handleCreateANewProductFn } = useMutation({
+    mutationFn: handleCreateANewProduct,
+
+    // {
+    //   id: crypto.randomUUID(),
+    //   image: imageSelected,
+    //   name: variables.get('name'),
+    //   description: variables.get('description'),
+    //   price: variables.get('price'),
+    //   createAt: new Intl.DateTimeFormat('pt-BR', {
+    //     weekday: 'long',
+    //     year: 'numeric',
+    //     month: 'long',
+    //     day: 'numeric',
+    //     timeZone: 'UTC',
+    //   }).format(new Date()),
+    //   updatedAt: new Intl.DateTimeFormat('pt-BR', {
+    //     weekday: 'long',
+    //     year: 'numeric',
+    //     month: 'long',
+    //     day: 'numeric',
+    //     timeZone: 'UTC',
+    //   }).format(new Date()),
+    // },
+    onSuccess: (_, variables) => {
+      queryClient.setQueryData(['products'], (old: Product[]) => [
+        ...old,
+        {
+          id: crypto.randomUUID(),
+          image: imageSelected,
+          name: variables.get('name'),
+          description: variables.get('description'),
+          price: new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(Number(variables.get('price'))),
+          createdAt: new Intl.DateTimeFormat('pt-BR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'UTC',
+          }).format(new Date()),
+          updatedAt: new Intl.DateTimeFormat('pt-BR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'UTC',
+          }).format(new Date()),
+        },
+      ])
+    },
+  })
+
   const onSubmit = async ({
     name,
     description,
@@ -107,15 +199,21 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
     form.append('name', name)
     form.append('description', description)
     form.append('price', price)
-    form.append('image', image)
+    form.append('image', image[0])
 
-    console.log(form.get('image'))
+    if (!idToEdit) {
+      try {
+        await handleCreateANewProductFn(form)
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
   return (
     <Sheet onOpenChange={(e) => handleSave(e)} open={open}>
       <SheetTrigger asChild>{children}</SheetTrigger>
 
-      <SheetContent className="overflow-scroll w-full lg:max-w-[640px] md:overflow-hidden">
+      <SheetContent className="overflow-scroll w-full lg:max-w-[640px] md:overflow-x-hidden">
         <form
           className="flex flex-col gap-4 h-full"
           onSubmit={handleSubmit((data) => onSubmit(data))}
@@ -181,7 +279,7 @@ export function SheetProduct({ children, title, label }: SheetProductProps) {
             )}
           </div>
 
-          <SheetFooter className="flex flex-row gap-2 justify-end pb-5 md:pb-0">
+          <SheetFooter className="flex flex-row gap-2 justify-end pb-5 ">
             <SheetClose asChild>
               <Button type="button" variant={'outline'}>
                 cancelar

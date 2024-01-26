@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 
 import { z } from 'zod'
-import { api } from '@/services/axios'
+import { api } from '@/lib/axios'
 import { AxiosError } from 'axios'
 
 const schema = z.object({
