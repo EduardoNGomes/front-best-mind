@@ -42,9 +42,18 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const product = row.original
 
+      const isUrlValid = (url: string): string[] => {
+        const urlParts = url.split('http')
+        return urlParts
+      }
+
       return (
         <img
-          src={`${api.defaults.baseURL}/${product.image}`}
+          src={
+            isUrlValid(product.image).length > 1
+              ? product.image
+              : `${api.defaults.baseURL}/${product.image}`
+          }
           className="h-10 w-10 aspect-square object-contain"
           alt=""
         />

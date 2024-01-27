@@ -249,12 +249,12 @@ export function SheetProductCreate({
             )}
           />
 
-          <div className="flex-1 h-50 w-32 md:h-80 md:w-60">
+          <div className="flex-1 h-52 w-32 md:h-80 md:w-60">
             {imageSelected && (
               <img
                 src={imageSelected}
                 alt=""
-                className="rounded-lg object-cover"
+                className="rounded-lg object-cover h-40 w-28 "
               />
             )}
           </div>
