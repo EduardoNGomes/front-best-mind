@@ -23,7 +23,7 @@ import {
   AlertDialogAction,
   AlertDialogPortal,
 } from '@/components/ui/alert-dialog'
-import { SheetProduct } from '@/components/ui/sheet-product'
+import { SheetProductUpdate } from '@/components/ui/sheet-product-update'
 import { api } from '@/lib/axios'
 
 export type Product = {
@@ -45,7 +45,7 @@ export const columns: ColumnDef<Product>[] = [
       return (
         <img
           src={`${api.defaults.baseURL}/${product.image}`}
-          className=""
+          className="h-10 w-10 aspect-square object-contain"
           alt=""
         />
       )
@@ -81,7 +81,7 @@ export const columns: ColumnDef<Product>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <SheetProduct
+            <SheetProductUpdate
               idToEdit={product.id}
               label="Altere um produto"
               title="Alterar Produto"
@@ -95,7 +95,7 @@ export const columns: ColumnDef<Product>[] = [
                 <PencilSimple className="h-4 w-4" />
                 editar
               </DropdownMenuItem>
-            </SheetProduct>
+            </SheetProductUpdate>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>

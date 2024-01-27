@@ -3,7 +3,7 @@ import { columns } from './column'
 import { DataTable } from './datatable'
 import { Power } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
-import { SheetProduct } from '@/components/ui/sheet-product'
+import { SheetProductCreate } from '@/components/ui/sheet-product-create'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/axios'
 import { AxiosError } from 'axios'
@@ -57,12 +57,12 @@ export const Home = () => {
       <main className="p-4 lg:max-w-7xl mx-auto flex flex-col gap-4">
         <section className="flex sm:items-center justify-between flex-col sm:flex-row">
           <h2 className="text-black text-2xl font-bold">Produtos</h2>
-          <SheetProduct
+          <SheetProductCreate
             label="Adicione um novo produto"
             title="Adicionar Produto"
           >
             <Button className="capitalize w-fit">adicionar produto</Button>
-          </SheetProduct>
+          </SheetProductCreate>
         </section>
         <DataTable data={products} columns={columns} />
       </main>

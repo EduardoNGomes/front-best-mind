@@ -38,8 +38,8 @@ const ACCEPTED_IMAGE_TYPES = [
 ]
 
 const schema = z.object({
-  name: z.string().min(1, 'Campo obrigatorio'),
-  description: z.string().min(1, 'Campo obrigatório'),
+  name: z.string().min(1).optional(),
+  description: z.string().min(1, 'Campo obrigatório').optional(),
   price: z
     .string()
     .min(1, 'Campo obrigatorio')
@@ -48,7 +48,8 @@ const schema = z.object({
 
       return verifyIfNumberIsValid(sanitizedValue)
     }, 'O campo digitado precisa ser um número válido')
-    .transform((value) => value.replace(',', '.')),
+    .transform((value) => value.replace(',', '.'))
+    .optional(),
   image: z
     .any()
     .refine(
@@ -62,19 +63,20 @@ const schema = z.object({
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       '.jpg, .jpeg, .png and .webp files are accepted.',
-    ),
+    )
+    .optional(),
 })
 
 type FormProductType = z.infer<typeof schema>
 
 type SheetProductProps = {
   children: ReactNode
-  idToEdit?: string
+  idToEdit: string
   title: string
   label: string
 }
 
-export function SheetProduct({
+export function SheetProductUpdate({
   children,
   title,
   label,
@@ -90,9 +92,16 @@ export function SheetProduct({
     handleSubmit,
     formState: { errors },
     control,
+    watch,
+    setValue,
   } = useForm<FormProductType>({
     resolver: zodResolver(schema),
-    defaultValues: { name: '', price: '', description: '', image: '' },
+    defaultValues: {
+      name: '',
+      price: '',
+      description: '',
+      image: '',
+    },
   })
 
   const handleSave = (e: boolean) => {
@@ -108,6 +117,43 @@ export function SheetProduct({
     const previewURL = URL.createObjectURL(files[0])
 
     setImageSelected(previewURL)
+  }
+
+  const { description, name, price } = watch()
+
+  const getProductExist = async () => {
+    console.log('hi')
+
+    try {
+      const { data } = await api.get(`/product/${idToEdit}`)
+
+      const product: Product = data.product
+
+      setValue('name', product.name)
+      setValue('price', product.price)
+      setValue('description', product.description)
+      setImageSelected(`${api.defaults.baseURL}/${product.image}`)
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 400) {
+        toast.warning(`Por favor verifique novamente os campos.`)
+        return
+      }
+      if (error instanceof AxiosError && error.response?.status === 409) {
+        toast.warning(`Este produto já existe.`)
+        return
+      }
+
+      if (error instanceof AxiosError && error.status === 401) {
+        toast.warning('Sessão expirada.')
+      } else {
+        toast.error('Ocorreu um error inexperado')
+      }
+      navigate('/sign-in')
+    }
+  }
+
+  if (name === '' && description === '' && price === '') {
+    getProductExist()
   }
 
   const handleCreateANewProduct = async (dataToCreated: FormData) => {
@@ -154,14 +200,14 @@ export function SheetProduct({
           createdAt: new Intl.DateTimeFormat('pt-BR', {
             weekday: 'long',
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric',
             timeZone: 'UTC',
           }).format(new Date()),
           updatedAt: new Intl.DateTimeFormat('pt-BR', {
             weekday: 'long',
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric',
             timeZone: 'UTC',
           }).format(new Date()),
@@ -178,19 +224,16 @@ export function SheetProduct({
   }: FormProductType) => {
     const form = new FormData()
 
-    form.append('name', name)
-    form.append('description', description)
-    form.append('price', price)
-    form.append('image', image[0])
+    if (name) form.append('name', name)
+    if (description) form.append('description', description)
+    if (price) form.append('price', price)
+    if (image) form.append('image', image[0])
 
-    if (!idToEdit) {
-      try {
-        await handleCreateANewProductFn(form)
-      } catch (error) {
-        toast.warning(`Ocorreu um erro inexperado, recarregue a página`)
-      }
-    }
+    console.log(form.get('image'))
+
+    // await handleCreateANewProductFn(form)
   }
+
   return (
     <Sheet onOpenChange={(e) => handleSave(e)} open={open}>
       <SheetTrigger asChild>{children}</SheetTrigger>
@@ -212,20 +255,26 @@ export function SheetProduct({
             id={`name-edit`}
             type="text"
             subtitle="Nome do produto ou serviço, visível aos clientes."
+            value={name}
             {...register('name')}
+            onChange={(e) => setValue('name', e.target.value)}
             errorMessage={errors.name?.message}
           />
 
           <TextareaWithLabel
             label="Descrição"
+            value={description}
             {...register('description')}
+            onChange={(e) => setValue('description', e.target.value)}
             errorMessage={errors.description?.message}
           />
 
           <InputPriceWithLabel
             label="Preço"
             id="price-edit"
+            value={price}
             {...register('price')}
+            onChange={(e) => setValue('price', e.target.value)}
             errorMessage={errors.price?.message}
           />
 

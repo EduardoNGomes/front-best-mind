@@ -65,12 +65,13 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
                 className="[&>*:nth-child(3)]:hidden [&>*:nth-child(4)]:hidden [&>*:nth-child(5)]:hidden
-                md:[&>*:nth-child(3)]:table-cell md:[&>*:nth-child(4)]:table-cell md:[&>*:nth-child(5)]:table-cell
-      
-                "
+                md:[&>*:nth-child(3)]:table-cell md:[&>*:nth-child(4)]:table-cell md:[&>*:nth-child(5)]:table-cell"
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    key={cell.id}
+                    className="first-of-type:flex first-of-type:items-center first-of-type:justify-center"
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
