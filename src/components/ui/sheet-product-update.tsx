@@ -53,18 +53,18 @@ const schema = z.object({
   image: z
     .any()
     .refine(
-      (files) => files?.length === 1,
+      (files) => files?.length >= 0,
       'Imagem(.jpg/.jpeg/.png/.webp) obrigatória com tamanho de até 5MB',
     )
     .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+      (files) => files?.[0]?.size <= MAX_FILE_SIZE || !files,
       `Max file size is 5MB.`,
     )
     .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type) || !files,
       '.jpg, .jpeg, .png and .webp files are accepted.',
     )
-    .optional(),
+    .nullable(),
 })
 
 type FormProductType = z.infer<typeof schema>
@@ -122,8 +122,6 @@ export function SheetProductUpdate({
   const { description, name, price } = watch()
 
   const getProductExist = async () => {
-    console.log('hi')
-
     try {
       const { data } = await api.get(`/product/${idToEdit}`)
 
@@ -156,9 +154,9 @@ export function SheetProductUpdate({
     getProductExist()
   }
 
-  const handleCreateANewProduct = async (dataToCreated: FormData) => {
+  const handleUpdateProduct = async (dataToCreated: FormData) => {
     try {
-      await api.post('/product', dataToCreated)
+      await api.put(`/product/${idToEdit}`, dataToCreated)
       toast.success('Produto criado com sucesso')
       setOpen(false)
     } catch (error) {
@@ -182,37 +180,36 @@ export function SheetProductUpdate({
 
   const queryClient = useQueryClient()
 
-  const { mutateAsync: handleCreateANewProductFn } = useMutation({
-    mutationFn: handleCreateANewProduct,
+  const { mutateAsync: handleUpdateProductFn } = useMutation({
+    mutationFn: handleUpdateProduct,
 
     onSuccess: (_, variables) => {
-      queryClient.setQueryData(['products'], (old: Product[]) => [
-        ...old,
-        {
-          id: crypto.randomUUID(),
-          image: imageSelected,
-          name: variables.get('name'),
-          description: variables.get('description'),
-          price: new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(Number(variables.get('price'))),
-          createdAt: new Intl.DateTimeFormat('pt-BR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            timeZone: 'UTC',
-          }).format(new Date()),
-          updatedAt: new Intl.DateTimeFormat('pt-BR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            timeZone: 'UTC',
-          }).format(new Date()),
-        },
-      ])
+      queryClient.setQueryData(['products'], (old: Product[]) =>
+        old.map((element) => {
+          if (element.id === idToEdit) {
+            return {
+              id: idToEdit,
+              image: imageSelected,
+              name: variables.get('name'),
+              description: variables.get('description'),
+              price: new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(Number(variables.get('price'))),
+              createdAt: element.createdAt,
+              updatedAt: new Intl.DateTimeFormat('pt-BR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                timeZone: 'UTC',
+              }).format(new Date()),
+            }
+          } else {
+            return element
+          }
+        }),
+      )
     },
   })
 
@@ -229,9 +226,7 @@ export function SheetProductUpdate({
     if (price) form.append('price', price)
     if (image) form.append('image', image[0])
 
-    console.log(form.get('image'))
-
-    // await handleCreateANewProductFn(form)
+    await handleUpdateProductFn(form)
   }
 
   return (
