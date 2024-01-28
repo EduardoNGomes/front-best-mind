@@ -20,11 +20,11 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogCancel,
-  AlertDialogAction,
   AlertDialogPortal,
 } from '@/components/ui/alert-dialog'
 import { SheetProductUpdate } from '@/components/ui/sheet-product-update'
 import { api } from '@/lib/axios'
+import { ButtonAlertDialogAction } from '@/components/ui/buttonAlertDialogAction'
 
 export type Product = {
   image: string
@@ -130,9 +130,12 @@ export const columns: ColumnDef<Product>[] = [
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className="text-white bg-destructive">
+                    <ButtonAlertDialogAction id={product.id}>
                       Continue
-                    </AlertDialogAction>
+                    </ButtonAlertDialogAction>
+                    {/* <AlertDialogAction className="text-white bg-destructive">
+                      Continue
+                    </AlertDialogAction> */}
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialogPortal>
