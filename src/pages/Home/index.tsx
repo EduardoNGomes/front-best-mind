@@ -36,7 +36,15 @@ export const Home = () => {
     navigate('/sign-in')
   }
 
-  const handleSingOut = () => {
+  const handleSingOut = async () => {
+    try {
+      await api.post('/logout')
+      toast('Volte sempre!')
+    } catch (error) {
+      toast.error(`Ocorreu um error`)
+      console.log(error)
+    }
+
     navigate('/sign-in')
   }
   return (
