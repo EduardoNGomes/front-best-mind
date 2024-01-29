@@ -87,6 +87,7 @@ export function SheetProductCreate({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
     control,
   } = useForm<FormProductType>({
     resolver: zodResolver(schema),
@@ -117,6 +118,8 @@ export function SheetProductCreate({
     try {
       await api.post('/product', dataToCreated)
       toast.success('Produto criado com sucesso')
+      reset()
+      setImageSelected(null)
       setOpen(false)
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 400) {
@@ -247,6 +250,7 @@ export function SheetProductCreate({
                 errorMessage={errors.image?.message?.toString()}
               />
             )}
+            defaultValue={null}
           />
 
           <div className="flex-1 h-52 w-32 md:h-80 md:w-60">

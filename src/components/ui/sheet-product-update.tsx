@@ -123,7 +123,7 @@ export function SheetProductUpdate({
   const { description, name, price } = watch()
 
   const { isLoading, error } = useQuery({
-    queryKey: [`product`],
+    queryKey: [`product-${idToEdit}`],
     queryFn: async () => {
       const { data } = await api.get(`/product/${idToEdit}`)
 
