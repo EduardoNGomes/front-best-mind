@@ -22,8 +22,9 @@ import { api } from '@/lib/axios'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Product } from '@/pages/Home/column'
+import { SkeletonHome } from './skeleton-home'
 
 const verifyIfNumberIsValid = (value: string): boolean => {
   if (isNaN(Number(value))) return false
@@ -121,38 +122,21 @@ export function SheetProductUpdate({
 
   const { description, name, price } = watch()
 
-  const getProductExist = async () => {
-    try {
+  const { isLoading, error } = useQuery({
+    queryKey: [`product`],
+    queryFn: async () => {
       const { data } = await api.get(`/product/${idToEdit}`)
 
       const product: Product = data.product
+      setValue('name', product!.name)
+      setValue('price', product!.price)
+      setValue('description', product!.description)
+      setImageSelected(`${api.defaults.baseURL}/${product!.image}`)
 
-      setValue('name', product.name)
-      setValue('price', product.price)
-      setValue('description', product.description)
-      setImageSelected(`${api.defaults.baseURL}/${product.image}`)
-    } catch (error) {
-      if (error instanceof AxiosError && error.response?.status === 400) {
-        toast.warning(`Por favor verifique novamente os campos.`)
-        return
-      }
-      if (error instanceof AxiosError && error.response?.status === 409) {
-        toast.warning(`Este produto já existe.`)
-        return
-      }
-
-      if (error instanceof AxiosError && error.status === 401) {
-        toast.warning('Sessão expirada.')
-      } else {
-        toast.error('Ocorreu um error inexperado')
-      }
-      navigate('/sign-in')
-    }
-  }
-
-  if (name === '' && description === '' && price === '') {
-    getProductExist()
-  }
+      return data
+    },
+    enabled: name === '' && price === '' && description === '',
+  })
 
   const handleUpdateProduct = async (dataToCreated: FormData) => {
     try {
@@ -229,91 +213,113 @@ export function SheetProductUpdate({
     await handleUpdateProductFn(form)
   }
 
+  if (error) {
+    if (error instanceof AxiosError && error.response?.status === 400) {
+      toast.warning(`Por favor verifique novamente os campos.`)
+      return
+    }
+    if (error instanceof AxiosError && error.response?.status === 409) {
+      toast.warning(`Este produto já existe.`)
+      return
+    }
+
+    if (error instanceof AxiosError && error.status === 401) {
+      toast.warning('Sessão expirada.')
+    } else {
+      toast.error('Ocorreu um error inexperado')
+    }
+    navigate('/sign-in')
+  }
+
   return (
     <Sheet onOpenChange={(e) => handleSave(e)} open={open}>
       <SheetTrigger asChild>{children}</SheetTrigger>
 
       <SheetContent className="overflow-scroll w-full lg:max-w-[640px] md:overflow-x-hidden">
-        <form
-          className="flex flex-col gap-4 h-full"
-          onSubmit={handleSubmit((data) => onSubmit(data))}
-        >
-          <SheetHeader className="mb-2">
-            <SheetTitle>{title}</SheetTitle>
-            <SheetDescription style={{ marginTop: 0 }}>
-              {label}
-            </SheetDescription>
-          </SheetHeader>
+        {isLoading ? (
+          <SkeletonHome />
+        ) : (
+          <form
+            className="flex flex-col gap-4 h-full"
+            onSubmit={handleSubmit((data) => onSubmit(data))}
+          >
+            <SheetHeader className="mb-2">
+              <SheetTitle>{title}</SheetTitle>
+              <SheetDescription style={{ marginTop: 0 }}>
+                {label}
+              </SheetDescription>
+            </SheetHeader>
 
-          <InputWithLabel
-            label="Nome"
-            id={`name-edit`}
-            type="text"
-            subtitle="Nome do produto ou serviço, visível aos clientes."
-            value={name}
-            {...register('name')}
-            onChange={(e) => setValue('name', e.target.value)}
-            errorMessage={errors.name?.message}
-          />
+            <InputWithLabel
+              label="Nome"
+              id={`name-edit`}
+              type="text"
+              subtitle="Nome do produto ou serviço, visível aos clientes."
+              value={name}
+              {...register('name')}
+              onChange={(e) => setValue('name', e.target.value)}
+              errorMessage={errors.name?.message}
+            />
 
-          <TextareaWithLabel
-            label="Descrição"
-            value={description}
-            {...register('description')}
-            onChange={(e) => setValue('description', e.target.value)}
-            errorMessage={errors.description?.message}
-          />
+            <TextareaWithLabel
+              label="Descrição"
+              value={description}
+              {...register('description')}
+              onChange={(e) => setValue('description', e.target.value)}
+              errorMessage={errors.description?.message}
+            />
 
-          <InputPriceWithLabel
-            label="Preço"
-            id="price-edit"
-            value={price}
-            {...register('price')}
-            onChange={(e) => setValue('price', e.target.value)}
-            errorMessage={errors.price?.message}
-          />
+            <InputPriceWithLabel
+              label="Preço"
+              id="price-edit"
+              value={price}
+              {...register('price')}
+              onChange={(e) => setValue('price', e.target.value)}
+              errorMessage={errors.price?.message}
+            />
 
-          <Controller
-            control={control}
-            name="image"
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <InputFileWithLabel
-                id="image"
-                label="Imagem"
-                subtitle="JPEG ou PNG a baixo de 5MB."
-                placeholder="Upload da Imagem"
-                type="file"
-                value={value.filename}
-                onBlur={onBlur}
-                onChange={(e) => {
-                  onChange(e.target.files)
-                  handleImageSelect(e)
-                }}
-                ref={ref}
-                errorMessage={errors.image?.message?.toString()}
-              />
-            )}
-          />
+            <Controller
+              control={control}
+              name="image"
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <InputFileWithLabel
+                  id="image"
+                  label="Imagem"
+                  subtitle="JPEG ou PNG a baixo de 5MB."
+                  placeholder="Upload da Imagem"
+                  type="file"
+                  value={value.filename}
+                  onBlur={onBlur}
+                  onChange={(e) => {
+                    onChange(e.target.files)
+                    handleImageSelect(e)
+                  }}
+                  ref={ref}
+                  errorMessage={errors.image?.message?.toString()}
+                />
+              )}
+            />
 
-          <div className="flex-1 h-50 w-32 md:h-80 md:w-60">
-            {imageSelected && (
-              <img
-                src={imageSelected}
-                alt=""
-                className="rounded-lg object-cover"
-              />
-            )}
-          </div>
+            <div className="flex-1 h-50 w-32 md:h-80 md:w-60">
+              {imageSelected && (
+                <img
+                  src={imageSelected}
+                  alt=""
+                  className="rounded-lg object-cover"
+                />
+              )}
+            </div>
 
-          <SheetFooter className="flex flex-row gap-2 justify-end pb-5 ">
-            <SheetClose asChild>
-              <Button type="button" variant={'outline'}>
-                cancelar
-              </Button>
-            </SheetClose>
-            <Button type="submit">{title}</Button>
-          </SheetFooter>
-        </form>
+            <SheetFooter className="flex flex-row gap-2 justify-end pb-5 ">
+              <SheetClose asChild>
+                <Button type="button" variant={'outline'}>
+                  cancelar
+                </Button>
+              </SheetClose>
+              <Button type="submit">{title}</Button>
+            </SheetFooter>
+          </form>
+        )}
       </SheetContent>
     </Sheet>
   )
