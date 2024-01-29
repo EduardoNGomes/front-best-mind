@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { api } from '@/lib/axios'
 import { AxiosError } from 'axios'
+import { useState } from 'react'
 
 const schema = z.object({
   name: z.string().min(1, 'Campo obrigatorio'),
@@ -31,6 +32,8 @@ const schema = z.object({
 type FormLoginType = z.infer<typeof schema>
 
 export const SignUp = () => {
+  const [buttonShouldBeDisable, setButtonShouldBeDisable] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -42,6 +45,7 @@ export const SignUp = () => {
   const navigate = useNavigate()
 
   const onSubmit = async (data: FormLoginType) => {
+    setButtonShouldBeDisable(true)
     try {
       await api.post('/user', data)
       toast.success('Usuário criado com sucesso')
@@ -57,6 +61,8 @@ export const SignUp = () => {
         toast.error(`Não foi possível concluir está ação`)
         console.log(error)
       }
+    } finally {
+      setButtonShouldBeDisable(false)
     }
   }
 
@@ -110,7 +116,11 @@ export const SignUp = () => {
             errorMessage={errors.password?.message}
           />
 
-          <Button className="w-full" type="submit">
+          <Button
+            className="w-full"
+            type="submit"
+            disabled={buttonShouldBeDisable}
+          >
             cadastrar
           </Button>
         </form>
