@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/axios'
 import { AxiosError } from 'axios'
 import { toast } from 'sonner'
+import { SkeletonHome } from '@/components/ui/skeleton-home'
 
 export const Home = () => {
   const navigate = useNavigate()
@@ -24,8 +25,7 @@ export const Home = () => {
     },
   })
 
-  if (isPending) return 'Loading...'
-  // TODO: SKELETON
+  if (isPending) return <SkeletonHome />
 
   if (error) {
     if (error instanceof AxiosError && error.status === 401) {
