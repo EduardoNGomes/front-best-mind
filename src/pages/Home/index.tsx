@@ -14,10 +14,11 @@ export const Home = () => {
   const navigate = useNavigate()
 
   const {
-    isPending,
+    isFetching,
     error,
     data: products,
   } = useQuery({
+    retry: 0,
     queryKey: ['products'],
     queryFn: async () => {
       const { data } = await api.get('/product')
@@ -25,7 +26,7 @@ export const Home = () => {
     },
   })
 
-  if (isPending) return <SkeletonHome />
+  if (isFetching) return <SkeletonHome />
 
   if (error) {
     if (error instanceof AxiosError && error.status === 401) {

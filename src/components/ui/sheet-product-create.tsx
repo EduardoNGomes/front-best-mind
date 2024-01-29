@@ -147,7 +147,6 @@ export function SheetProductCreate({
 
     onSuccess: (_, variables) => {
       queryClient.setQueryData(['products'], (old: Product[]) => [
-        ...old,
         {
           id: crypto.randomUUID(),
           image: imageSelected,
@@ -172,6 +171,7 @@ export function SheetProductCreate({
             timeZone: 'UTC',
           }).format(new Date()),
         },
+        ...old,
       ])
     },
   })
