@@ -24,7 +24,7 @@ import { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Product } from '@/pages/Home/column'
-import { SkeletonHome } from './skeleton-home'
+import { SkeletonProduct } from './skeleton-product'
 
 const verifyIfNumberIsValid = (value: string): boolean => {
   if (isNaN(Number(value))) return false
@@ -237,7 +237,7 @@ export function SheetProductUpdate({
 
       <SheetContent className="overflow-scroll w-full lg:max-w-[640px] md:overflow-x-hidden">
         {isLoading ? (
-          <SkeletonHome />
+          <SkeletonProduct />
         ) : (
           <form
             className="flex flex-col gap-4 h-full"
