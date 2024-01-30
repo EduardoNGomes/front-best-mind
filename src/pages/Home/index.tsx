@@ -32,7 +32,7 @@ export const Home = () => {
     if (error instanceof AxiosError && error.status === 401) {
       toast.warning('Sessão expirada.')
     } else {
-      toast.error('Ocorreu um error inexperado')
+      console.log('Ocorreu um error inexperado:', error)
     }
     navigate('/sign-in')
   }
