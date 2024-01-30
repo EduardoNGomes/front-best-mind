@@ -156,7 +156,7 @@ export function SheetProductCreate({
     onSuccess: (_, variables) => {
       queryClient.setQueryData(['products'], (old: Product[]) => [
         {
-          id: crypto.randomUUID(),
+          id: variables.get('id'),
           image: imageSelected,
           name: variables.get('name'),
           description: variables.get('description'),
@@ -194,7 +194,7 @@ export function SheetProductCreate({
     image,
   }: FormProductType) => {
     const form = new FormData()
-
+    form.append(`id`, crypto.randomUUID())
     form.append('name', name)
     form.append('description', description)
     form.append('price', price)
