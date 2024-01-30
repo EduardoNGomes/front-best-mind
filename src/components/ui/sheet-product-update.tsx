@@ -144,21 +144,29 @@ export function SheetProductUpdate({
       toast.success('Produto criado com sucesso')
       setOpen(false)
     } catch (error) {
-      if (error instanceof AxiosError && error.response?.status === 400) {
-        toast.warning(`Por favor verifique novamente os campos.`)
-        return
-      }
-      if (error instanceof AxiosError && error.response?.status === 409) {
-        toast.warning(`Este produto já existe.`)
-        return
+      if (error instanceof AxiosError) {
+        switch (error.response?.status) {
+          case 400: {
+            toast.warning(`Por favor verifique novamente os campos.`)
+            break
+          }
+          case 409: {
+            toast.warning(`Este produto já existe.`)
+            break
+          }
+          case 401: {
+            toast.warning('Sessão expirada.')
+            navigate('/sign-in')
+            break
+          }
+          default: {
+            toast.error('Ocorreu um error inexperado')
+          }
+        }
+        throw Error(error.response?.data)
       }
 
-      if (error instanceof AxiosError && error.status === 401) {
-        toast.warning('Sessão expirada.')
-      } else {
-        toast.error('Ocorreu um error inexperado')
-      }
-      navigate('/sign-in')
+      throw new Error('internal server error')
     }
   }
 
@@ -195,6 +203,9 @@ export function SheetProductUpdate({
         }),
       )
     },
+    onError: (err) => {
+      console.error(err)
+    },
   })
 
   const onSubmit = async ({
@@ -214,21 +225,29 @@ export function SheetProductUpdate({
   }
 
   if (error) {
-    if (error instanceof AxiosError && error.response?.status === 400) {
-      toast.warning(`Por favor verifique novamente os campos.`)
-      return
-    }
-    if (error instanceof AxiosError && error.response?.status === 409) {
-      toast.warning(`Este produto já existe.`)
-      return
+    if (error instanceof AxiosError) {
+      switch (error.response?.status) {
+        case 400: {
+          toast.warning(`Por favor verifique novamente os campos.`)
+          break
+        }
+        case 409: {
+          toast.warning(`Este produto já existe.`)
+          break
+        }
+        case 401: {
+          toast.warning('Sessão expirada.')
+          navigate('/sign-in')
+          break
+        }
+        default: {
+          toast.error('Ocorreu um error inexperado')
+        }
+      }
+      throw Error(error.response?.data)
     }
 
-    if (error instanceof AxiosError && error.status === 401) {
-      toast.warning('Sessão expirada.')
-    } else {
-      toast.error('Ocorreu um error inexperado')
-    }
-    navigate('/sign-in')
+    throw new Error('internal server error')
   }
 
   return (
